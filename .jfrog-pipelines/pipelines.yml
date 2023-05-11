@@ -24,7 +24,7 @@ pipelines:
       - name: mvn_build_step
         type: MvnBuild
         configuration:
-          deployerSnapshotRepo: {{ .Values.deployerRepo }}
+          deployerSnapshotRepo: {{ .Values.deployerRepo }}. #hello
           deployerReleaseRepo: {{ .Values.deployerRepo }}
           inputResources:
             - name: mvn_repo
