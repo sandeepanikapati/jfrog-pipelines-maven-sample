@@ -1,5 +1,5 @@
 pipeline:
-  name: JenkinsIntForJiraCommon
+  name: JenkinsIntForJiraCommon1
 repo:
   gitProvider: sandy_github
   path: sandeepanikapati/jfrog-pipelines-maven-sample
