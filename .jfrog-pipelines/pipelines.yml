@@ -38,6 +38,7 @@ pipelines:
         # Make sure to deploy the custom ext-build-info plugin:: see https://github.com/marvelution/ext-build-info/
         JFROG_CLI_PLUGINS_SERVER: {{.Values.artifactory}}
         JFROG_CLI_BUILD_NUMBER: ${run_id}
+        JFROG_CLI_LOG_LEVEL: DEBUG
     runtime:
       type: image
       image:
