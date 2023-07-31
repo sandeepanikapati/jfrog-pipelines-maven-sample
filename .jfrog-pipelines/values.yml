@@ -1,4 +1,11 @@
-gitProvider: sandy_github
+pipeline:
+  name: JenkinsIntForJiraCommon
+repo:
+  gitProvider: sandy_github
+  path: sandeepanikapati/jfrog-pipelines-maven-sample
 artifactory: sandy_Art
-repoPath: sandeepanikapati/jfrog-pipelines-maven-sample
-deployerRepo: sandy-maven-local
+mvn:
+  deployerSnapshotRepo: sandy-maven-local
+  deployerReleaseRepo: maven-releases
+  deployerPromotionRepo: libs-release-local
+jira: Jira
