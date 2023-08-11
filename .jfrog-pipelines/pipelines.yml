@@ -1,6 +1,6 @@
-template: true   # required for local template.. hello test...
+template: true   # required for local template. hello
 valuesFilePath: ./values.yml
-​
+
 resources:
   - name: {{.Values.pipeline.name}}_GitRepo
     type: GitRepo
@@ -13,75 +13,53 @@ resources:
         commit: true
       cancelPendingRunsOn:
         newCommit: true
-​
+
   - name: {{.Values.pipeline.name}}_BuildInfo
     type: BuildInfo
     configuration:
       sourceArtifactory: {{.Values.artifactory}}
       buildName: ${JFROG_CLI_BUILD_NAME}
       buildNumber: ${JFROG_CLI_BUILD_NUMBER}
-​
+
   - name: {{.Values.pipeline.name}}_Functions
     type: mvntest/Functions
     configuration:
       functions: all     
-​
+
 pipelines:
-  - name: Maven_Quickstart
-    steps:
-      - name: mvn_build_step
-        type: MvnBuild
-        configuration:
-          deployerSnapshotRepo: {{ .Values.deployerRepo }}. #hello
-          deployerReleaseRepo: {{ .Values.deployerRepo }}
-          inputResources:
-            - name: mvn_repo
-            - name: cron_trigger_mvn
-          integrations:
-            - name: {{ .Values.artifactory }}
-​
-      - name: publish_build
-        type: PublishBuildInfo
-        configuration:
-          forceXrayScan: false
-          inputSteps:
-            - name: mvn_build_step
-          outputResources:
-            - name: mvn_build_info
-​
-  - name: {{.Values.pipeline.name}}_TEST
+- name: {{.Values.pipeline.name}}_TEST
+  configuration:
+    retentionPolicy:
+      maxAgeDays: 1
+      minRuns: 10
+    jfrogCliVersion: 2
+    environmentVariables:
+      readOnly:
+        # Make sure to deploy the custom ext-build-info plugin:: see https://github.com/marvelution/ext-build-info/
+        JFROG_CLI_PLUGINS_SERVER: {{.Values.artifactory}}
+        JFROG_CLI_BUILD_NUMBER: ${run_id}
+        JFROG_CLI_LOG_LEVEL: DEBUG
+    runtime:
+      type: image
+      image:
+        custom:
+          name: releases-docker.jfrog.io/jfrog/pipelines-u20java
+          tag: '8'
+  steps:
+  - name: build
+    type: mvntest/MvnBuild
     configuration:
-      retentionPolicy:
-        maxAgeDays: 1
-        minRuns: 10
-      jfrogCliVersion: 2
-      environmentVariables:
-        readOnly:
-          # Make sure to deploy the custom ext-build-info plugin:: see https://github.com/marvelution/ext-build-info/
-          JFROG_CLI_PLUGINS_SERVER: {{.Values.artifactory}}
-          JFROG_CLI_BUILD_NUMBER: ${run_id}
-          JFROG_CLI_LOG_LEVEL: DEBUG
-      runtime:
-        type: image
-        image:
-          custom:
-            name: releases-docker.jfrog.io/jfrog/pipelines-u20java
-            tag: '8'
-    steps:
-      - name: build
-        type: mvntest/MvnBuild
-        configuration:
-          mvnCommand: clean install
-          resolverReleaseRepo: maven
-          forceXrayScan: true
-          failOnScan: {{eq "{{gitBranch}}" "master" }}
-          autoPublishBuildInfo: true
-          integrations:
-            - name: {{.Values.artifactory}}
-            - name: {{.Values.jira}}
-          inputResources:
-            - name: {{.Values.pipeline.name}}_Functions
-            - name: {{.Values.pipeline.name}}_GitRepo
-              trigger: false
-          outputResources:
-            - name: {{.Values.pipeline.name}}_BuildInfo
+      mvnCommand: clean install
+      resolverReleaseRepo: maven
+      forceXrayScan: true
+      failOnScan: {{eq "{{gitBranch}}" "master" }}
+      autoPublishBuildInfo: true
+      integrations:
+      - name: {{.Values.artifactory}}
+      - name: {{.Values.jira}}
+      inputResources:
+      - name: {{.Values.pipeline.name}}_Functions
+      - name: {{.Values.pipeline.name}}_GitRepo
+        trigger: false
+      outputResources:
+      - name: {{.Values.pipeline.name}}_BuildInfo
