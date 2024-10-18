@@ -18,6 +18,10 @@ steps:
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
 
+- task: ArtifactoryToolsInstaller@1
+  inputs:
+    artifactoryService: 'hts2_art1'
+    cliInstallationRepo: 'jf-cli-remote'
 
 - task: ArtifactoryMaven@2
   inputs:
