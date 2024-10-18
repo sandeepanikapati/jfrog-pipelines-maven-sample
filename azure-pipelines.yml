@@ -21,7 +21,7 @@ steps:
 - task: ArtifactoryToolsInstaller@1
   inputs:
     artifactoryService: 'hts2_art1'
-    cliInstallationRepo: 'jf-cli-remote'
+    cliInstallationRepo: 'extractors'
 
 - task: ArtifactoryMaven@2
   inputs:
