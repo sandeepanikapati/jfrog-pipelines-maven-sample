@@ -17,3 +17,13 @@ steps:
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
+- task: ArtifactoryMaven@2
+  inputs:
+    mavenPomFile: 'pom.xml'
+    goals: 'install'
+    artifactoryResolverService: 'hts2_art1'
+    targetResolveReleaseRepo: 'maven'
+    targetResolveSnapshotRepo: 'maven'
+    artifactoryDeployService: 'hts2_art1'
+    targetDeployReleaseRepo: 'san-maven-1'
+    targetDeploySnapshotRepo: 'san-maven-1'
