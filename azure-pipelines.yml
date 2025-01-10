@@ -23,7 +23,7 @@ steps:
     jfrogPlatformConnection: 'hts2'
     command: |
       jf config show
-      jf ping
+      jf rt ping
       
 - task: ArtifactoryToolsInstaller@1
   inputs:
